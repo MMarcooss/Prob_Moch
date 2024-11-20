@@ -52,10 +52,10 @@ public class Produto {
     @Override
     public String toString() {
         return "Produto{" +
-                "qnt=" + qnt +
-                ", peso=" + peso +
-                ", valor=" + valor +
-                ", nome='" + nome + '\'' +
+                "qnt=" + getQnt() +
+                ", peso=" + getPeso() +
+                ", valor=" + getValor() +
+                ", nome='" + getNome() + '\'' +
                 '}';
     }
 }
