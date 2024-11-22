@@ -6,13 +6,13 @@ import java.sql.SQLException;
 
     public class Botoes {
         public static void removeProdutoFromDatabase(Produto produto) {
-            String query = "DELETE FROM Produtos WHERE nome = ?";  // Ou pode ser usado um ID único para a exclusão
+            String query = "DELETE FROM Produtos WHERE nome = ?";
 
             try (Connection conn = DatabaseConnection.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(query)) {
 
-                stmt.setString(1, produto.getNome());  // Supondo que o 'nome' seja único, mas o ideal é usar um ID único
-                stmt.executeUpdate();  // Executa a remoção no banco de dados
+                stmt.setString(1, produto.getNome());
+                stmt.executeUpdate();
 
             } catch (SQLException e) {
                 e.printStackTrace();
