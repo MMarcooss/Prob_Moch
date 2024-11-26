@@ -1,3 +1,27 @@
+
+
+//uso dos botões de atualizar e excluir
+//addButton.setOnAction(e -> {
+//    String nome = nomeInput.getText();
+//    double valor = Double.parseDouble(valorInput.getText());
+//    int peso = Integer.parseInt(pesoInput.getText());
+//    int qnt = Integer.parseInt(qntInput.getText());
+//
+//    Produto produto = new Produto(nome, valor, peso, qnt);
+//    produtosData.add(produto);
+//    estoque.addEstoque(produto);
+//    nomeInput.clear();
+//    valorInput.clear();
+//    pesoInput.clear();
+//    qntInput.clear();
+//    descInput.clear();
+//});
+//
+//attButton.setOnAction(e -> AtualizarProduto.atualizarProduto(table, nomeInput, valorInput, pesoInput, qntInput, descInput));
+//
+//removeButton.setOnAction(e -> RemoverProduto.removerProduto(table, estoque));
+
+
 package com.example.interfaceestoque;
 
 import javafx.collections.FXCollections;
