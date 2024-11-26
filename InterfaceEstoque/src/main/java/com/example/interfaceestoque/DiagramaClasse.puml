@@ -1,6 +1,19 @@
 @startuml
 
 package Mochila {
+
+    class Estoque {
+        - capMax : int
+        - capUtil : int
+        - produtos : List<Produto>
+
+        + getCapMax() : int
+        + setCapMax() : void
+        + addEstoque(produto : Produto) : void
+        + capRest() : int
+        + otimizarEstoque(todosProdutos : List<Produto>) : void
+    }
+
     class Produto {
         - nome : String
         - valor : double
@@ -12,69 +25,14 @@ package Mochila {
         + setPeso(peso : int) : void
         + setQnt(qnt : int) : void
         + getNome() : String
-        + getValor() : double
+        + getValor() : int
         + getPeso() : int
         + getQnt() : int
         + calcTotal() : int
-        + getValorPorPeso() : double
-    }
-
-    class Estoque {
-        - capMax : int
-        - capUtil : int
-        - produtos : List<Produto>
-
-        + getCapMax() : int
-        + setCapMax(capMax : int) : void
-        + addEstoque(produto : Produto) : void
-        + removeEstoque(produto : Produto) : void
-        + capRest() : int
-        + otimizarEstoque(todosProdutos : List<Produto>) : void
-    }
-
-    class EstoqueController {
-        - addButton : Button
-        - otimizarButton : Button
-        - attButton : Button
-        - removeButton : Button
-        - table : TableView<Produto>
-        - nomeColumn : TableColumn<Produto, String>
-        - valorColumn : TableColumn<Produto, Double>
-        - pesoColumn : TableColumn<Produto, Integer>
-        - qntColumn : TableColumn<Produto, Integer>
-        - descColumn : TableColumn<Produto, String>
-        - nomeInput : TextField
-        - valorInput : TextField
-        - pesoInput : TextField
-        - qntInput : TextField
-        - descInput : TextField
-        - produtosData : ObservableList<Produto>
-        - estoque : Estoque
-
-        + initialize() : void
-    }
-
-    class AlgoritimoAEstrela {
-        + executar(todosProdutos : List<Produto>, capacidadeMaxima : int) : List<Produto>
-    }
-
-    class Estado {
-        - produtos : List<Produto>
-        - pesoTotal : int
-        - valorTotal : double
-
-        + Estado(produtos : List<Produto>, pesoTotal : int, valorTotal : double)
-        + getProdutos() : List<Produto>
-        + getPesoTotal() : int
-        + getValorTotal() : double
-        + getF() : double
+        + getValorPorPeso() : int
     }
 
     Estoque --> Produto : "produtos"
-    EstoqueController --> Estoque : "estoque"
-    EstoqueController --> Produto : "produtosData"
-    EstoqueController ..> AlgoritimoAEstrela : "usa"
-    AlgoritimoAEstrela ..> Produto : "analisa"
-    AlgoritimoAEstrela ..> Estado : "gera"
 }
+
 @enduml
