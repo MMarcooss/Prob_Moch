@@ -9,7 +9,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class EstoqueController {
@@ -47,15 +46,21 @@ public class EstoqueController {
 
     private ObservableList<Produto> produtosData = FXCollections.observableArrayList();
     private Estoque estoque = new Estoque(50);
+    private ProdutoDAO produtoDAO = new ProdutoDAO(); // DAO para interação com o banco
 
     @FXML
     public void initialize() {
+        // Configuração das colunas da TableView
         nomeColumn.setCellValueFactory(cellData -> cellData.getValue().nomeProperty());
         valorColumn.setCellValueFactory(cellData -> cellData.getValue().valorProperty().asObject());
         pesoColumn.setCellValueFactory(cellData -> cellData.getValue().pesoProperty().asObject());
         qntColumn.setCellValueFactory(cellData -> cellData.getValue().qntProperty().asObject());
         table.setItems(produtosData);
 
+        // Carregar produtos do banco de dados ao iniciar
+        carregarProdutosDoBanco();
+
+        // Ação do botão "Adicionar"
         addButton.setOnAction(e -> {
             String nome = nomeInput.getText();
             double valor = Double.parseDouble(valorInput.getText());
@@ -65,15 +70,16 @@ public class EstoqueController {
             Produto produto = new Produto(nome, valor, peso, qnt);
             produtosData.add(produto);
             estoque.addEstoque(produto);
-            nomeInput.clear();
-            valorInput.clear();
-            pesoInput.clear();
-            qntInput.clear();
-            descInput.clear();
+
+            // Salvar no banco de dados
+            produtoDAO.adicionarProduto(produto);
+
+            limparCampos();
         });
 
+        // Ação do botão "Otimizar"
         otimizarButton.setOnAction(e -> {
-            List<Produto> produtosSelecionados = AlgoritimoAEstrela.executar(new ArrayList<>(produtosData), estoque.getCapMax());
+            List<Produto> produtosSelecionados = AlgoritimoAEstrela.executar(produtosData, estoque.getCapMax());
             estoque.otimizarEstoque(produtosSelecionados);
 
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -82,6 +88,8 @@ public class EstoqueController {
             alert.setContentText("Produtos otimizados:\n" + estoque.toString());
             alert.showAndWait();
         });
+
+        // Ação do botão "Atualizar"
         attButton.setOnAction(e -> {
             Produto selectedProduto = table.getSelectionModel().getSelectedItem();
             if (selectedProduto != null) {
@@ -90,33 +98,50 @@ public class EstoqueController {
                 selectedProduto.setPeso(Integer.parseInt(pesoInput.getText()));
                 selectedProduto.setQnt(Integer.parseInt(qntInput.getText()));
 
+                // Atualizar no banco de dados
+                produtoDAO.atualizarProduto(selectedProduto);
+
                 table.refresh();
-                nomeInput.clear();
-                valorInput.clear();
-                pesoInput.clear();
-                qntInput.clear();
-                descInput.clear();
+                limparCampos();
             } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Nenhum produto selecionado");
-                alert.setHeaderText(null);
-                alert.setContentText("Por favor, selecione um produto para atualizar.");
-                alert.showAndWait();
+                mostrarAlerta("Nenhum produto selecionado", "Por favor, selecione um produto para atualizar.");
             }
         });
 
+        // Ação do botão "Remover"
         removeButton.setOnAction(e -> {
             Produto selectedProduto = table.getSelectionModel().getSelectedItem();
             if (selectedProduto != null) {
                 produtosData.remove(selectedProduto);
                 estoque.removeEstoque(selectedProduto);
+
+                // Remover do banco de dados
+                produtoDAO.removerProduto(selectedProduto.getNome());
             } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Nenhum produto selecionado");
-                alert.setHeaderText(null);
-                alert.setContentText("Por favor, selecione um produto para remover.");
-                alert.showAndWait();
+                mostrarAlerta("Nenhum produto selecionado", "Por favor, selecione um produto para remover.");
             }
         });
+    }
+
+    private void carregarProdutosDoBanco() {
+        produtosData.clear();
+        produtosData.addAll(produtoDAO.buscarTodosProdutos());
+        table.setItems(produtosData);
+    }
+
+    private void limparCampos() {
+        nomeInput.clear();
+        valorInput.clear();
+        pesoInput.clear();
+        qntInput.clear();
+        descInput.clear();
+    }
+
+    private void mostrarAlerta(String titulo, String mensagem) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensagem);
+        alert.showAndWait();
     }
 }
